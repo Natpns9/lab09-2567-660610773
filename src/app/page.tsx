@@ -1,62 +1,68 @@
+'use client'
 import Footer from "@components/Footer";
 import Header from "@components/Header";
 import Task from "@components/Task";
 import TaskInput from "@components/TaskInput";
 
 import { nanoid } from "nanoid";
-import { useState } from "react";
+import React, { useState } from "react";
 
-export default function Home() {
-  // Define the interface of task-item object
-  interface TaskItem {
-    id: string;
+
+
+
+interface TaskItem {
+  id: string;
   title: string;
   completed: boolean;
-  }
+  deleteTaskFunc?: (taskId: number) => void; 
+  toggleDoneTaskFunc?: (taskId: number) => void; 
+}
 
-  // useState hook for an array of task-item objects
+export default function Home() {
+
   const [tasks, setTasks] = useState<TaskItem[]>([]);
 
-  // Define the function with proper type
   const addTask = (newTaskTitle: string) => {
-    const newTask: TaskItem = { id: nanoid(), title: newTaskTitle, completed: false };
-    setTasks([...tasks, newTask]);
+    const newTask: TaskItem = {
+      id: nanoid(),
+      title: newTaskTitle,
+      completed: false,
+    };
+    const newTasks: TaskItem[] = [...tasks, newTask];
+    if(newTaskTitle != ""){
+      setTasks(newTasks);
+    }
   };
 
-  // Define the function with proper type
   const deleteTask = (taskId: string) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
+    const newTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(newTasks);
   };
 
-  // Define the function with proper type
   const toggleDoneTask = (taskId: string) => {
-    // Structured clone will copy an array or an object "deeply"
+
     const newTasks = structuredClone(tasks);
     const task = newTasks.find((x) => x.id === taskId);
-    if (task) {
+    if (task != undefined){
       task.completed = !task.completed;
       setTasks(newTasks);
     }
   };
 
-  // Calculate task statistics
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter(task => task.completed).length;
+
+
   return (
-    // Main container
     <div className="container mx-auto">
-      {/* header section */}
       <Header />
-      {/* tasks container */}
       <div style={{ maxWidth: "400px" }} className="mx-auto">
-        {/* Task summary */}
         <p className="text-center text-secondary fst-italic">
-          All (...) Done (...)
+          All ({tasks.length}) Done ({tasks.filter((t)=>t.completed).length})
         </p>
-        {/* task input */}
+
+
         <TaskInput addTaskFunc={addTask} />
 
-        {/* tasks mapping*/}
+
         {tasks.map((task) => (
           <Task
             id={task.id}
@@ -69,8 +75,7 @@ export default function Home() {
         ))}
       </div>
 
-      {/* //footer section */}
-      <Footer year="2024" fullName="Panisa Pathapee" studentId="660610773" />
+      <Footer year="2024" fullName="Yutthakarn Sajui" studentId="660610787" />
     </div>
   );
 }
